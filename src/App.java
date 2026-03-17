@@ -1,4 +1,8 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Random;
+import java.util.Scanner;
 
 /** 
  * MIT License
@@ -41,6 +45,7 @@ public class App {
     static int codigo1(int[] vetor) {
         int resposta = 0;
         for (int i = 0; i < vetor.length; i += 2) {
+            operacoes++;
             resposta += vetor[i]%2;
         }
         return resposta;
@@ -55,7 +60,8 @@ public class App {
         int contador = 0;
         for (int k = (vetor.length - 1); k > 0; k /= 2) {
             for (int i = 0; i <= k; i++) {
-                contador++;
+                operacoes++;
+                contador++; // Operador ++
             }
 
         }
@@ -70,6 +76,7 @@ public class App {
         for (int i = 0; i < vetor.length - 1; i++) {
             int menor = i;
             for (int j = i + 1; j < vetor.length; j++) {
+                operacoes++;
                 if (vetor[j] < vetor[menor])
                     menor = j;
             }
@@ -85,6 +92,7 @@ public class App {
      * @return Um inteiro que significa...
      */
     static int codigo4(int n) {
+        operacoes++;
         if (n <= 2)
             return 1;
         else
@@ -104,7 +112,89 @@ public class App {
         return vetor;
         
     }
-    public static void main(String[] args) {
+
+    static double nanoToMilli(double nano){
+        return nanoToMilli * nano;
+    }
+
+    static void salvarResultado(String arquivo){
         
+    }
+    public static void main(String[] args) {
+        int[] vetor;
+        StringBuilder anotacoes = new StringBuilder();
+        anotacoes.append("Tempo; Tamanho; Cont Operações; Algoritmo\n");
+
+        for(int i = 0; i < tamanhosTesteGrande.length; i++){
+            String res;
+            vetor = gerarVetor(tamanhosTesteGrande[i]);
+            operacoes = 0;
+            long inicio = (long) nanoToMilli(System.nanoTime());
+            long termino;  
+            codigo1(vetor);
+            termino = (long) nanoToMilli(System.nanoTime());
+            double tempo = (termino - inicio);
+            res = String.format("%.4f;%d;%d;%d\n", tempo,tamanhosTesteGrande[i],operacoes,1);
+            System.out.printf(res);
+            anotacoes.append(res);
+        }
+
+        for(int i = 0; i < tamanhosTesteGrande.length; i++){
+            String res;
+            vetor = gerarVetor(tamanhosTesteGrande[i]);
+            operacoes = 0;
+            long inicio = (long) nanoToMilli(System.nanoTime());
+            long termino;  
+            codigo2(vetor);
+            termino = (long) nanoToMilli(System.nanoTime());
+            double tempo = (termino - inicio);
+            res = String.format("%.4f;%d;%d;%d\n", tempo,tamanhosTesteGrande[i],operacoes,2);
+            System.out.printf(res);
+            anotacoes.append(res);
+        }
+
+        for(int i = 0; i < tamanhosTesteMedio.length; i++){
+            String res;
+            vetor = gerarVetor(tamanhosTesteMedio[i]);
+            operacoes = 0;
+            long inicio = (long) nanoToMilli(System.nanoTime());
+            long termino;  
+            codigo3(vetor);
+            termino = (long) nanoToMilli(System.nanoTime());
+            double tempo = (termino - inicio);
+            res = String.format("%.4f;%d;%d;%d\n", tempo,tamanhosTesteMedio[i],operacoes,3);
+            System.out.printf(res);
+            anotacoes.append(res);
+        }
+
+
+        int n = 3;
+
+        if (n <= tamanhosTestePequeno.length) {
+            for(int i = 0; i < n; i++){
+                String res;
+                operacoes = 0;
+                long inicio = (long) nanoToMilli(System.nanoTime());
+                long termino;  
+                codigo4(tamanhosTestePequeno[i]);
+                termino = (long) nanoToMilli(System.nanoTime());
+                double tempo = (termino - inicio);
+                res = String.format("%.4f;%d;%d;%d\n", tempo,tamanhosTestePequeno[i],operacoes,4);
+                anotacoes.append(res);
+            }
+        }
+        
+        try{
+            FileWriter file = new FileWriter("Tabela.csv");
+            file.write(anotacoes.toString());
+            file.close();
+        }
+        catch(IOException e){
+            e.getStackTrace();
+        }
+        
+
+
+
     }
 }
